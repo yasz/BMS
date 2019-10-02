@@ -1,0 +1,34 @@
+﻿@page "/"
+@inject BookService BookService
+
+<input class="form-control" value="@inputValue" placeholder="@message" @onkeypress="@(e => OnKeyDown(e))" @oninput="@(e => OnTextChanged(e))" />
+<p>WELCOME: @vano</p>
+@code {
+    string message = "please input student number";
+    string inputValue = "";
+    string vano = "";
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+
+            if (string.IsNullOrEmpty(vano))
+            {
+                vano = inputValue;
+                inputValue = "";
+                message = "please scan ISBN";
+            }
+            else
+            {
+                await BookService.AddRent(inputValue,vano);
+                vano = "";
+                inputValue = "";
+            }
+        }
+    }
+    private void OnTextChanged(ChangeEventArgs e)
+    {
+        inputValue = e.Value as string;
+    }
+
+}
