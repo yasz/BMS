@@ -37,9 +37,9 @@ namespace Library
 
 
             services.AddDbContext<BookContext>(options =>
-                options.UseSqlServer(
-                    "Server=(localdb)\\mssqllocaldb;Database=Library.TestDB;Trusted_Connection=True;MultipleActiveResultSets=true"));
-
+                options.UseNpgsql(Configuration.GetSection("DefaultConnection").Value)
+                );
+            
             services
                 .AddBlazorise(options =>
                 {

@@ -40,8 +40,10 @@
             else
             {
                 await BookService.AddRent(inputValue, vano);
+                var obj = await JSRuntime.InvokeAsync<string>("MyPop","借阅成功"+vano+":"+inputValue);
                 vano = "";
                 inputValue = "";
+                
             }
         }
     }

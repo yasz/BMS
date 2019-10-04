@@ -3,3 +3,7 @@
     //alert("hello")
     return ctrl;
 }
+
+window.MyPop = (msgs) => {
+    alert(msgs);
+}
