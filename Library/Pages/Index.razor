@@ -1,61 +1,82 @@
 ﻿@page "/"
 @inject BookService BookService
 @inject IJSRuntime JSRuntime
-
-<EditForm Model="@rent">
+@inject NavigationManager NavigationManager
+<EditForm EditContext="@editContext">
     <DataAnnotationsValidator />
     <ValidationSummary />
-    <InputText id="BookNoInput" class="form-control" @bind-Value="rent.BookNo" hidden="@HiddenBookNoInput" placeholder="请扫描书籍编号" @onkeypress="@(e => OnBookNoKeyDown(e))" />
-    <InputText id="VanoInput" class="form-control" @bind-Value="rent.Vano" hidden="@HiddenVanoInput" placeholder="请扫描学号" @onkeypress="@(e => OnVanoKeyDown(e))" />
 
-    <p>欢迎您: @vano</p>
+    <input id="BookNoInput" class="form-control" @bind-value="@rent.BookNo" @bind-value:event="oninput" hidden="@hiddenBookNoInput" placeholder="请扫描书籍编号" @onkeypress="@(e => OnBookNoKeyDown(e))" />
+    <input id="VanoInput" class="form-control" @bind-Value="@rent.Vano" @bind-Value:event="oninput" hidden="@hiddenVanoInput" placeholder="请扫描学号" @onkeypress="@(e => OnVanoKeyDown(e))" />
+
+    <p>欢迎您: @rent.Vano</p>
 
 </EditForm>
+
 @code {
-    private bool HiddenBookNoInput { get; set; } = true;
-    private bool HiddenVanoInput { get; set; } = false;
+    private bool hiddenBookNoInput { get; set; } = true;
+    private bool hiddenVanoInput { get; set; } = false;
     private Library.Models.Rent rent = new Library.Models.Rent();
     string message = "请扫描学号";
     string inputValue = "";
-    string vano = "";
+
+    private EditForm editForm;
 
     protected async override void OnAfterRender(bool firstRender)
     {
-        if (firstRender) {
+        if (firstRender)
+        {
             await JSRuntime.InvokeAsync<string>("MySetFocus", "VanoInput");
         }
     }
-    private async Task OnBookNoKeyDown(KeyboardEventArgs e) {
+    private async Task OnBookNoKeyDown(KeyboardEventArgs e)
+    {
         if (e.Key == "Enter")
         {
+            bool isValid = editContext.Validate();
+            if (isValid)
+            {
+                await BookService.AddRent(rent.BookNo, rent.Vano);
+                var obj = await JSRuntime.InvokeAsync<string>("MyPop", "借阅成功!");
+                NavigationManager.NavigateTo("",true);
+            }
 
         }
     }
     private async Task OnVanoKeyDown(KeyboardEventArgs e)
     {
+
         if (e.Key == "Enter")
         {
-            
-            //if (string.IsNullOrEmpty(vano))
-            //{
-            //    vano = inputValue;
-            //    inputValue = "";
-            //    message = "请扫描书籍编号";
-            //}
-            //else
-            //{
-            //    await BookService.AddRent(inputValue, vano);
-            //    var obj = await JSRuntime.InvokeAsync<string>
-            //        ("MyPop", "借阅成功" + vano + ":" + inputValue);
-            //    vano = "";
-            //    inputValue = "";
+            var a = rent.Vano;
+            bool isValid = editContext.Validate();
+            Console.WriteLine(string.Join(",", editContext.GetValidationMessages().ToList()));
+            if (isValid)
+            {
+                hiddenVanoInput = true;
+                rent.BookNo = "";
+                hiddenBookNoInput = false;
+                await JSRuntime.InvokeVoidAsync("MyAwait");
+                await JSRuntime.InvokeAsync<string>("MySetFocus", "BookNoInput");
+                
+            };
 
-            //}
         }
+
+
     }
     private void OnTextChanged(ChangeEventArgs e)
     {
         inputValue = e.Value as string;
     }
+
+    private EditContext editContext;
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(this.rent);
+        rent.BookNo = "1234567890";
+        rent.Vano = "";
+    }
+
 
 }

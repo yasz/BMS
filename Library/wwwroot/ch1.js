@@ -7,3 +7,7 @@
 window.MyPop = (msgs) => {
     alert(msgs);
 }
+
+window.MyAwait = () => {
+    console.log("await...");
+}

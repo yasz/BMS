@@ -1,0 +1,8 @@
+﻿@page "/Test"
+<h1>@Title</h1>
+
+<input @bind-Value="Title" @bind-Value:event="oninput" />
+
+@code {
+    private string Title { get; set; } = "Hello, World!";
+}
