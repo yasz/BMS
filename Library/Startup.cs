@@ -14,6 +14,7 @@ using Blazorise;
 using Blazorise.Bootstrap;
 using Library.Services;
 using Microsoft.EntityFrameworkCore;
+using Blazored.Modal;
 
 namespace Library
 {
@@ -34,7 +35,7 @@ namespace Library
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
             services.AddScoped<BookService>();
-
+            services.AddBlazoredModal();
 
             services.AddDbContext<BookContext>(options =>
                 options.UseNpgsql(Configuration.GetSection("DefaultConnection").Value)

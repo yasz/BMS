@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazored.Modal" Version="2.1.1" />
     <PackageReference Include="Blazorise.Bootstrap" Version="0.8.6.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
@@ -23,5 +24,7 @@
   <ItemGroup>
     <Folder Include="JsInteropClasses\" />
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties wwwroot_4css_4bootstrap_4bootstrap_1min_1css_1map__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

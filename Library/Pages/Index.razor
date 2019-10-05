@@ -7,11 +7,12 @@
     <ValidationSummary />
 
     <input id="BookNoInput" class="form-control" @bind-value="@rent.BookNo" @bind-value:event="oninput" hidden="@hiddenBookNoInput" placeholder="请扫描书籍编号" @onkeypress="@(e => OnBookNoKeyDown(e))" />
-    <input id="VanoInput" class="form-control" @bind-Value="@rent.Vano" @bind-Value:event="oninput" hidden="@hiddenVanoInput" placeholder="请扫描学号" @onkeypress="@(e => OnVanoKeyDown(e))" />
+    <input id="VanoInput" class="form-control" @bind-value="@rent.Vano" @bind-value:event="oninput" hidden="@hiddenVanoInput" placeholder="请扫描学号" @onkeypress="@(e => OnVanoKeyDown(e))" />
 
     <p>欢迎您: @rent.Vano</p>
 
 </EditForm>
+
 
 @code {
     private bool hiddenBookNoInput { get; set; } = true;
@@ -36,9 +37,22 @@
             bool isValid = editContext.Validate();
             if (isValid)
             {
-                await BookService.AddRent(rent.BookNo, rent.Vano);
-                var obj = await JSRuntime.InvokeAsync<string>("MyPop", "借阅成功!");
-                NavigationManager.NavigateTo("",true);
+                try {
+                    await BookService.AddRent(rent.BookNo, rent.Vano);
+                    await JSRuntime.InvokeAsync<string>("MyPop", "借阅成功!");
+                }catch (Exception error)
+                {
+                    await JSRuntime.InvokeAsync<string>("MyPop", error.Message);
+
+                }
+                finally
+                {
+                    NavigationManager.NavigateTo("/", true);
+                }
+            }else
+            {
+                rent.BookNo = "";
+
             }
 
         }
@@ -58,9 +72,13 @@
                 hiddenBookNoInput = false;
                 await JSRuntime.InvokeVoidAsync("MyAwait");
                 await JSRuntime.InvokeAsync<string>("MySetFocus", "BookNoInput");
-                
-            };
 
+            }
+            else
+            {
+                rent.Vano = "";
+
+            }
         }
 
 

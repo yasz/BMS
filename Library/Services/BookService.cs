@@ -16,16 +16,43 @@ namespace Library.Services
             _context = context;
         }
 
-        public async Task AddRent(string bookId, string vano)
+        public async Task AddRent(string bookNo, string vano)
         {
+            var records = _context.Rents.Where(r => r.BookNo == bookNo && r.EndDate.ToString() == "0001-01-01 00:00:00");
+            try
+            {
+                Rent record = records.Single();
+                if (record != null)
+                {
+                    throw new VAException($"异常001：此书已被{record.Vano}借阅");
+                }
+            }
+            catch (VAException e) { throw e; }
+            catch (Exception e) {  }
+
+
             _context.Rents.Add(new Rent()
             {
                 RentId = Guid.NewGuid(),
-                BookNo = bookId,
+                BookNo = bookNo,
                 Vano = vano,
-                StartDate = DateTime.UtcNow
-            }); ;
+                StartDate = DateTime.Now
+            }); 
             await _context.SaveChangesAsync();
+        }
+
+        public async Task ReturnBook(string bookNo)
+        {
+            var records = _context.Rents.Where(r => r.BookNo==bookNo && r.EndDate.ToString() == "0001-01-01 00:00:00");
+            try { 
+                Rent record = records.Single();
+                record.EndDate = DateTime.Now;
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception) {
+                 throw new Exception("异常101：此书尚未借出，不能归还");
+            }
+
         }
     }
 }

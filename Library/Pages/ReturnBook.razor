@@ -1,0 +1,65 @@
+﻿@page "/returnbook"
+@inject BookService BookService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+<EditForm EditContext="@editContext">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <input id="BookNoInput" class="form-control" @bind-value="@rent.BookNo" @bind-value:event="oninput" placeholder="请扫描书籍编号" @onkeypress="@(e => OnBookNoKeyDown(e))" />
+</EditForm>
+
+
+@code {
+
+    private Library.Models.Rent rent = new Library.Models.Rent();
+    string message = "请扫描学号";
+    string inputValue = "";
+
+    private EditForm editForm;
+
+    protected async override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeAsync<string>("MySetFocus", "BookNoInput");
+        }
+    }
+    private async Task OnBookNoKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            bool isValid = editContext.Validate();
+            if (isValid)
+            {
+                try {
+                    await BookService.ReturnBook(rent.BookNo);
+                    var obj = await JSRuntime.InvokeAsync<string>("MyPop", "还书成功!");
+                    NavigationManager.NavigateTo("", true);
+                }
+                catch (Exception error)
+                {
+                    await JSRuntime.InvokeAsync<string>("MyPop", error.Message);
+                    NavigationManager.NavigateTo("/returnbook", true);
+                    
+                }
+
+            }
+            else
+            {
+                rent.BookNo = "";
+
+            }
+
+        }
+    }
+
+    private EditContext editContext;
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(this.rent);
+        rent.Vano = "123123";
+        rent.BookNo = "";
+    }
+
+
+}
