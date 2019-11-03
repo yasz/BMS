@@ -18,9 +18,15 @@ namespace Library.Services
 
         public async Task AddRent(string bookNo, string vano)
         {
+
+            var rentBooksCount = _context.Rents.Where(r => r.Vano == vano && r.EndDate.ToString() == "0001-01-01 00:00:00").Count();
             var records = _context.Rents.Where(r => r.BookNo == bookNo && r.EndDate.ToString() == "0001-01-01 00:00:00");
             try
             {
+                if (rentBooksCount >= 2)
+                {
+                    throw new VAException($"异常002：您已借阅超过两本书籍");
+                }
                 Rent record = records.Single();
                 if (record != null)
                 {
