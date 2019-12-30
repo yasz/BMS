@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Blazored.Modal" Version="2.1.1" />
     <PackageReference Include="Blazorise.Bootstrap" Version="0.8.6.1" />
+    <PackageReference Include="DevExpress.Blazor" Version="19.1.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0">

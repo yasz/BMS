@@ -1,7 +1,9 @@
 ﻿@page "/"
-@inject BookService BookService
+
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
+
+
 <EditForm EditContext="@editBookNoContext">
     <DataAnnotationsValidator />
     <ValidationSummary />
@@ -45,7 +47,7 @@
             {
                 try
                 {
-                    await BookService.AddRent(bookNoInput.BookNo, vanoInput.Vano.Substring(1,vanoInput.Vano.Length-2));
+                    await _bookService.AddRent(bookNoInput.BookNo, vanoInput.Vano.Substring(1,vanoInput.Vano.Length-2));
                     await JSRuntime.InvokeAsync<string>("MyPop", "借阅成功!");
                 }
                 catch (Exception error)

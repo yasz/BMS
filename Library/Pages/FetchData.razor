@@ -1,12 +1,19 @@
 ﻿@page "/fetchdata"
 
 @using Library.Data
-@inject WeatherForecastService ForecastService
+@using DevExpress.Blazor
+
 
 <h1>Weather forecast</h1>
 
 <p>This component demonstrates fetching data from a service.</p>
-
+<DxDataGrid Data="@rents">
+    @*<DxDataGridColumn Field="@nameof(ProductFlat.Id)" Visible="false"></DxDataGridColumn>*@
+    <DxDataGridColumn Field="@nameof(Rent.Vano)" Caption="Temp. (C)"></DxDataGridColumn>
+    <DxDataGridSpinEditColumn Field="@nameof(Rent.BookNo)" Caption="Temp. (F)"></DxDataGridSpinEditColumn>
+    <DxDataGridDateEditColumn Field="@nameof(Rent.StartDate)" ></DxDataGridDateEditColumn>
+    <DxDataGridDateEditColumn Field="@nameof(Rent.EndDate)"></DxDataGridDateEditColumn>
+</DxDataGrid>
 @if (forecasts == null)
 {
     <p><em>Loading...</em></p>
@@ -30,6 +37,7 @@ else
                     <td>@forecast.TemperatureC</td>
                     <td>@forecast.TemperatureF</td>
                     <td>@forecast.Summary</td>
+
                 </tr>
             }
         </tbody>
@@ -38,9 +46,12 @@ else
 
 @code {
     WeatherForecast[] forecasts;
-
+    List<Rent> rents;
+    string[] summaries=new string[] { "A", "B", "C" };
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        //forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        rents =  _bookService.GetRent();
+
     }
 }

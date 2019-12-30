@@ -1,5 +1,5 @@
 ﻿@page "/returnbook"
-@inject BookService BookService
+
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 <EditForm EditContext="@editContext">
@@ -32,7 +32,7 @@
             if (isValid)
             {
                 try {
-                    await BookService.ReturnBook(rent.BookNo);
+                    await _bookService.ReturnBook(rent.BookNo);
                     var obj = await JSRuntime.InvokeAsync<string>("MyPop", "还书成功!");
                     NavigationManager.NavigateTo("", true);
                 }

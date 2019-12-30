@@ -37,7 +37,7 @@ namespace Library
             services.AddScoped<BookService>();
             services.AddBlazoredModal();
 
-            services.AddDbContext<BookContext>(options =>
+            services.AddDbContextPool<BookContext>(options =>
                 options.UseNpgsql(Configuration.GetSection("DefaultConnection").Value)
                 );
             
