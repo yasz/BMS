@@ -18,7 +18,7 @@ namespace Library.Services
         }
         public List<Rent> GetRent()
         {
-            //var result =  _context.Database.EnsureCreated();
+            var result =  _context.Database.EnsureCreated();
             var result2 =  _context.Rents.First();
             return new List<Rent>() { result2 };         
         }
