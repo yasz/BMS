@@ -3,24 +3,41 @@
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 
+    <div class="index">
+        <Alert Color="Color.Success" IsShow="showSuccess" IsDismisable="true">
+            <strong>借阅成功!</strong> 
+        </Alert>
+        <Alert Color="Color.Danger" IsShow="showError"  IsDismisable="true">
+            <strong>出错了!</strong> @errorMessage
+        </Alert>
 
-<EditForm EditContext="@editBookNoContext">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <input id="BookNoInput" class="form-control" @bind-value="@bookNoInput.BookNo" @bind-value:event="oninput" hidden="@hiddenBookNoInput" placeholder="请扫描书籍编号" @onkeypress="@(e => OnBookNoKeyDown(e))" />
-</EditForm>
-<EditForm EditContext="@editVanoContext" >
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <input id="VanoInput" class="form-control" @bind-value="@vanoInput.Vano" @bind-value:event="oninput" hidden="@hiddenVanoInput" placeholder="请扫描学号" @onkeypress="@(e => OnVanoKeyDown(e))" />
-    <p>欢迎您: @vanoInput.Vano</p>
-</EditForm>
+        <EditForm EditContext="@editBookNoContext">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <input id="BookNoInput" class="form-control" @bind-value="@bookNoInput.BookNo" @bind-value:event="oninput" hidden="@hiddenBookNoInput" placeholder="请扫描书籍编号" @onkeypress="@(e => OnBookNoKeyDown(e))" />
+        </EditForm>
+        <EditForm EditContext="@editVanoContext">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <input id="VanoInput" class="form-control" @bind-value="@vanoInput.Vano" @bind-value:event="oninput" hidden="@hiddenVanoInput" placeholder="请扫描学号" @onkeypress="@(e => OnVanoKeyDown(e))" />
+            @if (!string.IsNullOrEmpty(vanoInput.Vano))
+            {
+                <p>欢迎您: @vanoInput.Vano</p>
+            }
+        </EditForm>
+    </div>
+
 
 
 
 @code {
     private bool hiddenBookNoInput { get; set; } = true;
     private bool hiddenVanoInput { get; set; } = false;
+
+    private bool showSuccess { get; set; } = false;
+    private bool showError { get; set; } = false;
+    private string errorMessage { get; set; } = "";
+
     //private Library.Models.Rent rent = new Library.Models.Rent();
     private VanoInput vanoInput = new VanoInput();
     private BookNoInput bookNoInput = new BookNoInput();
@@ -42,18 +59,22 @@
     {
         if (e.Key == "Enter")
         {
-            bool isValid = editBookNoContext.Validate();            
+            bool isValid = editBookNoContext.Validate();
             if (isValid)
             {
                 try
                 {
                     await _bookService.AddRent(bookNoInput.BookNo, vanoInput.Vano.Substring(1,vanoInput.Vano.Length-2));
                     await JSRuntime.InvokeAsync<string>("MyPop", "借阅成功!");
+                   // this.showSuccess = true;
+                   // await Task.Delay(3000);
+                   // this.showSuccess = false;             
                 }
                 catch (Exception error)
                 {
                     await JSRuntime.InvokeAsync<string>("MyPop", error.Message);
-
+                    //this.showError = true;
+                    //this.errorMessage = error.Message;
                 }
                 finally
                 {
@@ -74,7 +95,7 @@
 
         if (e.Key == "Enter")
         {
-            bool isValid = editVanoContext.Validate();            
+            bool isValid = editVanoContext.Validate();
             Console.WriteLine(string.Join(",", editVanoContext.GetValidationMessages().ToList()));
             if (isValid)
             {

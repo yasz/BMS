@@ -26,8 +26,8 @@ namespace Library.Services
         {
             //var result = await _context.Database.EnsureCreatedAsync();
             Console.WriteLine("【"+await _context.Database.EnsureCreatedAsync());
-            var rentBooksCount = _context.Rents.Where(r => r.Vano == vano && r.EndDate.ToString() == "0001-01-01 00:00:00").Count();
-            var records = _context.Rents.Where(r => r.BookNo == bookNo && r.EndDate.ToString() == "0001-01-01 00:00:00");
+            var rentBooksCount = _context.Rents.Where(r => r.Vano == vano && r.EndDate <= new DateTime(2000,1,1)).Count();
+            var records = _context.Rents.Where(r => r.BookNo == bookNo && r.EndDate <= new DateTime(2000, 1, 1));
             try
             {
                 if (rentBooksCount >= 2)
